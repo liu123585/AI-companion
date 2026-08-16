@@ -40,20 +40,15 @@
 
 > 👉 **[Releases 页面 → v1.0.0](https://github.com/liu123585/AI-companion/releases/latest)**
 
-**三步安装**：
-1. 到 Releases 页面下载 **`download_merge.bat`**（小脚本，几 KB）。
-2. **双击 `download_merge.bat`** → 自动下载全部 924 个分块（`aipkg.part0001`~`aipkg.part0924`，合计 1.85 GB）并合并成 `AI伴侣完整包CPU版.7z`（首次会让你 `gh auth login` 登录 GitHub，约 10–30 分钟，看网速）。
-3. 用 **7-Zip** 右键解压 `AI伴侣完整包CPU版.7z` → 进解压目录双击 `AI伴侣.exe` 即用。
+**两步安装**：
+1. 到 Releases 页面下载 **`AI.CPU.7z`**（单文件，约 **1.85 GB**）——已含可执行文件 + Python 运行时 + ChatTTS 权重 + Whisper 权重。
+2. 用 **7-Zip** 右键解压 `AI.CPU.7z` → 进解压目录双击 `AI伴侣.exe` 即用。
 
-> 合并脚本已内置顺序与完整性检查，无需手动操作。若某块下载失败，重跑 bat 会自动补下缺失块。
-
-**SHA256 校验**（合并后核对，确认没下坏）：
+**SHA256 校验**（下载后核对，确认没下坏）：
 ```
-ceb03cc4edafbc8b2af1b83f0973b7e81e93383188a2079fcec880f975b75897  AI伴侣完整包CPU版.7z  (1.85 GB)
+ceb03cc4edafbc8b2af1b83f0973b7e81e93383188a2079fcec880f975b75897  AI.CPU.7z  (1.85 GB)
 ```
-> 自己校验：在文件目录里运行 `certutil -hashfile AI伴侣完整包CPU版.7z SHA256`，对比上面的字符串。
-
-> ⚠️ **为什么拆成 924 个 2MB 小分块**：GitHub 上传接口对单个文件连接只有 ~20 秒存活窗口，>3MB 必被掐断，1.85GB 单文件无论网页还是 API 都传不上去。拆成 2MB 小块后每块几秒传完（在窗口内），维护者用脚本逐块传上；你下载时由 `download_merge.bat` 自动拉全 + 合并，对你是透明的。
+> 自己校验：在文件目录里运行 `certutil -hashfile AI.CPU.7z SHA256`，对比上面的字符串。
 
 > ⚠️ **为什么是 CPU 版不是 GPU 版**：ChatTTS 是逐 token 自回归解码，瓶颈在串行步数、不在算力。实测 GPU vs CPU 推理速度几乎一致（4–5 s / 句），CUDA 版 torch 反而占 2.4 GB 体积。CPU 版用户机器无需 NVIDIA 显卡，开箱即用。
 
