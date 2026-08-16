@@ -30,22 +30,36 @@
 
 ---
 
-## 📦 获取完整包（含运行时与模型，双击即用）
+## 📦 下载完整包（双击即用）
 
-> ⚠️ 本仓库**仅含源码**。ChatTTS 嵌入式 Python 运行时、模型权重等体积达数 GB，**不纳入 git**。
+> 本仓库**仅含源码**。ChatTTS 嵌入式 Python 运行时、模型权重等体积数 GB，**不纳入 git**。
 
-请下载已打包好的完整包（已含全部运行时与模型，解压后双击 `AI伴侣.exe` 即可运行）：
+### 🎯 用户：从 Release 页面下载（推荐）
 
-> **完整包下载：** [点此下载](https://待填充) （国内网盘 / 对象存储，解压即得可运行程序）
+直接到 GitHub Releases 页面下载已打包好的完整包（已含可执行文件 + Python 运行时 + ChatTTS 权重 + Whisper 权重，解压后双击 `AI伴侣.exe` 即用）：
 
-### 自己打包完整包（可选）
-把本仓库 `AICompanion` 整个目录（已含 `resources/app/chattts_runtime`、`chattts/models`、`models/whisper-small` 等）用 **7-Zip** 压成 `AI伴侣.7z`，上传到任意国内可访问的网盘 / 对象存储，把上方链接替换掉即可。
+> 👉 **[Releases 页面 → v1.0.0](https://github.com/liu123585/AI-companion/releases/latest)**
 
-### 仅从源码自行组装（进阶，需联网下载大模型）
-1. 准备嵌入式 Python 运行时（含 `torch 2.9.1+cu126` / `ChatTTS` / `transformers`），放到 `resources/app/chattts_runtime/python/`
+**两步安装**：
+1. 下载 Releases 里的 **`AI伴侣完整包CPU版.7z`**（单文件，约 **1.85 GB**）。
+2. 用 **7-Zip** 右键解压 → 进解压目录双击 `AI伴侣.exe` 即用。
+
+**SHA256 校验**（下载后核对，确认没下坏）：
+```
+ceb03cc4edafbc8b2af1b83f0973b7e81e93383188a2079fcec880f975b75897  AI伴侣完整包CPU版.7z  (1.85 GB)
+```
+> 自己校验：在文件目录里运行 `certutil -hashfile AI伴侣完整包CPU版.7z SHA256`，对比上面的字符串。
+
+> ⚠️ **为什么是单文件不是分块**：GitHub 上传接口对单个文件有连接时长限制，分块 API 上传在国内网络下不稳定。打包为单个 .7z，维护者在 GitHub 网页拖拽上传（网页自带分块上传器可稳定传 1.85GB），你下载时也是一个文件、7-Zip 直接解压，最简单。
+
+> ⚠️ **为什么是 CPU 版不是 GPU 版**：ChatTTS 是逐 token 自回归解码，瓶颈在串行步数、不在算力。实测 GPU vs CPU 推理速度几乎一致（4–5 s / 句），CUDA 版 torch 反而占 2.4 GB 体积。CPU 版用户机器无需 NVIDIA 显卡，开箱即用。
+
+### 🔧 开发者：从源码自行组装
+
+1. 准备嵌入式 Python 运行时（`torch 2.13.0+cpu` / `ChatTTS 0.2.5` / `transformers`）放到 `resources/app/chattts_runtime/python/`
 2. `cd resources/app/chattts && python download_model.py` 下载 ChatTTS 权重（走 `hf-mirror.com` 镜像，含 sha256 校验与断点续传）
 3. 下载 `whisper-small` 权重到 `resources/app/models/whisper-small/`
-4. `cd resources/app && npm install && npm run dist`
+4. `cd resources/app && npm install && npm run dist`（输出 `resources/app/dist/AI伴侣.exe`，portable 单文件）
 
 ---
 
