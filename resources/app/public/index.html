@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#FF5C8A" />
+  <title>AI 伴侣</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- 主聊天界面 -->
+  <div class="app" id="app">
+    <header class="topbar">
+      <button class="pill mobile-only" id="mobileBack" type="button" title="收起">‹</button>
+      <div class="title">
+        <span class="avatar" id="avatar">💖</span>
+        <div>
+          <div class="name" id="companionName">小念</div>
+          <div class="status" id="statusText">在线 · 等你说话</div>
+          <div class="tone-chip" id="toneChip"></div>
+          <div class="stat-chip" id="modeChip">🗂 沉浸</div>
+          <div class="stat-chip" id="thinkChip">🤔 思考</div>
+          <div class="version" id="versionChip">v2.3 · 自动陪伴</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="pill test-tts" id="testTts" title="测试配音声音（听到声音说明 TTS 正常）">🔊 测声音</button>
+        <button class="pill" id="ttsToggle" title="配音开关">🔊 配音</button>
+        <button class="pill" id="notifBtn" title="开启通知">🔔 通知</button>
+        <button class="pill" id="minimizeBtn" title="收起为小窗">— 收起</button>
+        <button class="gear" id="openSettings" title="设置">⚙</button>
+      </div>
+    </header>
+
+    <div class="main-row">
+      <div class="left-col">
+        <main class="messages" id="messages"></main>
+
+        <button class="jump-latest" id="jumpLatest" hidden>↓ <span id="jumpCount">0</span> 条新消息</button>
+
+        <div class="cmd-hint" id="cmdHint" hidden></div>
+
+        <footer class="composer">
+      <div class="composer-attach">
+        <button id="plusBtn" class="img-btn" title="发图片 / 视频">➕</button>
+        <button id="micBtn" class="img-btn" title="语音输入（按住说话，松手转文字）">🎤</button>
+        <div id="attachPop" class="composer-pop" hidden>
+          <button class="pop-item" data-accept="image">📷 图片</button>
+          <button class="pop-item" data-accept="video">🎬 视频</button>
+        </div>
+      </div>
+          <input id="imgInput" type="file" accept="image/*,video/*" hidden />
+          <div id="imgPreview" class="img-preview" hidden></div>
+          <div id="replyPreview" class="reply-preview" hidden>
+            <div class="reply-preview-inner">
+              <div class="reply-preview-text"><span class="reply-preview-who"></span><span class="reply-preview-snippet"></span></div>
+              <button type="button" id="replyCancel" class="reply-cancel" title="取消回复">✕</button>
+            </div>
+          </div>
+          <div class="input-wrap" id="inputWrap">
+            <textarea id="input" placeholder="" rows="3"></textarea>
+            <button id="voiceHold" class="voice-hold" hidden>🎤 按住 说话</button>
+          </div>
+          <button id="send" class="send">发送</button>
+
+        </footer>
+      </div>
+
+      <div class="splitter" id="splitter" title="拖动调整图片与对话的比例"></div>
+
+      <aside class="stage" id="stage">
+        <div class="stage-chip"><span class="dot"></span>AI · 赛博女友</div>
+        <div class="stage-chip right" id="personaChip">女友</div>
+        <div class="char girlfriend" id="char">
+          <img class="char-img" id="charImg" alt="companion" />
+          <div class="mouth" id="mouth"><div class="mouth-shape" id="mouthShape"></div></div>
+        </div>
+        <div class="voice" id="voice"><span></span><span></span><span></span><span></span><span></span></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- 浮动小窗（收起后显示） -->
+  <div class="pet" id="pet" hidden>
+    <div class="pet-head" id="petHead">
+      <img class="pet-img" id="petImg" alt="companion" />
+      <span class="pet-emoji" id="petEmoji">💖</span>
+    </div>
+      <div class="pet-body">
+        <div class="pet-name" id="petName">小念</div>
+        <div class="pet-bubble" id="petBubble">在呢～</div>
+        <div class="pet-actions">
+          <button class="pet-open" id="petOpen">打开聊天</button>
+          <span class="pet-badge" id="petBadge" hidden>0</span>
+          <button class="pet-close" id="petClose">✕</button>
+        </div>
+      </div>
+  </div>
+
+  <!-- 设置 -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2>设置</h2>
+        <button class="close" id="closeSettings">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- ① 角色与称呼 -->
+        <div class="section-title">角色与称呼</div>
+        <label class="field">
+          <span>TA 是我的</span>
+          <select id="persona">
+            <option value="girlfriend">女友 💕</option>
+            <option value="boyfriend">男友 🤍</option>
+          </select>
+        </label>
+        <label class="field"><span>TA 的名字</span><input id="companionNameInput" type="text" placeholder="小念" /></label>
+        <label class="field"><span>我的称呼</span><input id="userNameInput" type="text" placeholder="主人" /></label>
+        <label class="field"><span>说话风格（也能聊天时说"用撒娇的语气"）</span><input id="toneInput" type="text" placeholder="例如：撒娇、高冷、温柔……" /></label>
+
+        <!-- ①½ 大模型账号 -->
+        <div class="section-title">大模型账号（必填，填你自己的 Key）</div>
+        <p class="hint">🔑 需要你自己的大模型 API Key 才能聊天/配音。默认用<b>智谱 GLM（glm-4-flash，有免费额度）</b>。把软件发给别人，别人填他自己的 Key，聊天记录也各是各的，互不干扰。</p>
+        <label class="field"><span>API Key</span><input id="apiKeyInput" type="password" placeholder="粘贴你的 Key，例如 zhuge-..." autocomplete="off" /></label>
+        <label class="field"><span>接口地址（留空=智谱官方）</span><input id="apiBaseInput" type="text" placeholder="https://open.bigmodel.cn/api/paas/v4" /></label>
+        <label class="field"><span>模型名（留空=glm-4-flash）</span><input id="apiModelInput" type="text" placeholder="glm-4-flash" /></label>
+        <label class="field row"><input id="ttsEnabled" type="checkbox" /><span>回复后自动朗读（配音）</span></label>
+        <label class="field row"><span>TA 回复形式</span>
+          <select id="voiceReplyMode">
+            <option value="random">随机（文字/语音交替）</option>
+            <option value="text">总是文字</option>
+            <option value="voice">总是语音</option>
+          </select>
+        </label>
+
+        <!-- ② TA 的声音：配音引擎 + 当前引擎的微调 -->
+        <div class="section-title">TA 的声音</div>
+        <p class="hint">🎙️ <b>Kokoro 自然离线配音</b>：完全离线、零 Key，中文音色自然度远超系统嗓音（双击「下载Kokoro.bat」准备模型）。下面可选 TA 的音色，女生选女声、男生选男声。</p>
+        <label class="field"><span>TA 的音色</span><select id="ttsVoice"></select></label>
+        <p class="hint" id="ttsVoiceWarn" style="display:none;color:#e2557a"></p>
+        <button class="btn ghost sm" id="ttsTestCurrent" type="button">🔊 试听一下声音</button>
+        <label class="field"><span>语速（0.5 慢 ～ 2.0 快，默认 1.2 已加快）</span><input id="ttsRate" type="range" min="0.5" max="2" step="0.1" /></label>
+
+        <!-- ③ 照片 -->
+        <div class="section-title">照片（可选）</div>
+        <label class="field col">
+          <span>女友照片：上传你的图片，或填远程直链</span>
+          <input id="portraitGirlfriendFile" type="file" accept="image/*" />
+          <span class="local-hint" id="portraitGirlfriendLocal"></span>
+          <input id="portraitGirlfriend" type="text" placeholder="https://...（留空则用上传/精选图）" />
+          <button class="btn ghost sm" id="clearGirlfriend" type="button">清除图片</button>
+        </label>
+        <label class="field col">
+          <span>男友照片：上传你的图片，或填远程直链</span>
+          <input id="portraitBoyfriendFile" type="file" accept="image/*" />
+          <span class="local-hint" id="portraitBoyfriendLocal"></span>
+          <input id="portraitBoyfriend" type="text" placeholder="https://...（留空则用上传/精选图）" />
+          <button class="btn ghost sm" id="clearBoyfriend" type="button">清除图片</button>
+        </label>
+        <label class="field col">
+          <span>我的头像：上传你的照片，或填远程直链</span>
+          <input id="userPortraitFile" type="file" accept="image/*" />
+          <span class="local-hint" id="userPortraitLocal"></span>
+          <input id="userPortrait" type="text" placeholder="https://...（留空则用默认绿色「我」）" />
+          <button class="btn ghost sm" id="clearUserPortrait" type="button">清除我的头像</button>
+        </label>
+        <button class="btn ghost sm" id="locateMouth" type="button">👄 定位嘴巴（手动微调）</button>
+        <p class="hint" style="margin-top:2px">已用<b>免费视觉 AI</b>自动识别嘴巴位置；若位置不准，点上面按钮手动微调即可。</p>
+
+        <!-- ④ 自动陪伴 -->
+        <div class="section-title">自动陪伴</div>
+        <label class="field row"><input id="proactiveEnabled" type="checkbox" /><span>允许 TA 主动给我发消息</span></label>
+        <label class="field"><span>TA 主动找我的频率</span><select id="autoIntervalMin">
+          <option value="30">每 30 分钟</option>
+          <option value="60">每 1 小时</option>
+          <option value="90" selected>每 1.5 小时</option>
+          <option value="720">每半天</option>
+          <option value="1440">每 1 天</option>
+          <option value="2880">每 2 天</option>
+          <option value="4320">每 3 天</option>
+          <option value="7200">每 5 天</option>
+          <option value="10080">每 7 天</option>
+          <option value="20160">每 14 天</option>
+        </select></label>
+        <p class="hint">💡 关掉窗口（点 X）是<b>收进托盘保活</b>，不是退出——这样 TA 能在你"没打开窗口"时按上面频率后台主动发消息，并用系统通知提醒你。要彻底退出请用托盘右键「退出」或下面的按钮。</p>
+
+        <p class="hint">手机上用：把网址发给朋友，TA 用安卓 Chrome 打开 → 点右上角「⋮」→「添加到主屏幕」，就能像 App 一样用（上面图片、下面对话）。</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" id="clearChat">清空对话</button>
+        <button class="btn ghost" id="pingProactive">让 TA 主动发一条</button>
+        <button class="btn ghost danger" id="quitApp">退出程序</button>
+        <button class="btn primary" id="saveSettings">保存我的设置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 首次打开引导：填写 API Key -->
+  <div class="modal" id="onboardModal">
+    <div class="modal-card" style="max-width:460px">
+      <div class="modal-head"><h2>欢迎使用 AICompanion 💕</h2></div>
+      <div class="modal-body">
+        <p class="hint">第一次打开需要先填一个<b>你自己的大模型 API Key</b>，才能和 TA 聊天、让 TA 说话。默认用智谱 GLM（glm-4-flash，注册即送免费额度）。</p>
+        <p class="hint">🔒 这个 Key 只存在你本机，不会上传给任何人；把软件发给朋友，朋友填他自己的，互不影响。</p>
+        <label class="field"><span>我的称呼（TA 怎么叫你）</span><input id="onboardUserName" type="text" placeholder="例如：主人 / 宝贝 / 直接留空" /></label>
+        <label class="field"><span>API Key *</span><input id="onboardApiKey" type="password" placeholder="粘贴你的 Key" autocomplete="off" /></label>
+        <label class="field"><span>接口地址（留空=智谱官方）</span><input id="onboardApiBase" type="text" placeholder="https://open.bigmodel.cn/api/paas/v4" /></label>
+        <label class="field"><span>模型名（留空=glm-4-flash）</span><input id="onboardApiModel" type="text" placeholder="glm-4-flash" /></label>
+        <p class="hint" id="onboardErr" style="color:#e2557a;display:none"></p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn primary" id="onboardStart">开始使用 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 嘴巴定位 -->
+  <div class="modal" id="mouthModal">
+    <div class="modal-card" style="max-width:420px">
+      <div class="modal-head"><h2>定位嘴巴</h2><button class="close" id="mouthClose">✕</button></div>
+      <div class="modal-body">
+        <p class="hint">在下面的照片上，<b>点击 TA 的嘴巴位置</b>。说话时嘴巴会在你点的地方张合。可拖动下方滑块微调嘴巴大小。</p>
+        <div class="mouth-pick" id="mouthPick">
+          <img id="mouthPickImg" alt="pick" />
+          <div class="mouth-mark" id="mouthMark"></div>
+        </div>
+        <label class="field"><span>嘴巴宽度</span><input id="mouthW" type="range" min="6" max="42" value="14" /></label>
+        <label class="field"><span>嘴巴高度（张开幅度）</span><input id="mouthH" type="range" min="3" max="22" value="7" /></label>
+        <div class="modal-foot" style="border:none;padding-top:4px">
+          <button class="btn ghost" id="mouthCancel">取消</button>
+          <button class="btn primary" id="mouthSave">保存定位</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 顶部提示（配音/测声音结果） -->
+  <div class="toast" id="toast"></div>
+
+  <div class="img-lightbox" id="imgLightbox"><button class="img-lightbox-close" id="imgLightboxClose" aria-label="关闭">×</button><img id="imgLightboxImg" alt="预览" /></div>
+
+  <script type="module" src="/stt.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

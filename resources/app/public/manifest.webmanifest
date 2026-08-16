@@ -1,0 +1,23 @@
+{
+  "name": "AI 伴侣",
+  "short_name": "伴侣",
+  "description": "你的 AI 女友 / 男友，网页与桌面通用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1b1530",
+  "theme_color": "#1b1530",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192'%3E%3Crect width='192' height='192' rx='40' fill='%23ff6b9d'/%3E%3Ctext x='50%25' y='50%25' font-size='110' text-anchor='middle' dominant-baseline='central'%3E%F0%9F%92%96%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512'%3E%3Crect width='512' height='512' rx='110' fill='%23ff6b9d'/%3E%3Ctext x='50%25' y='50%25' font-size='300' text-anchor='middle' dominant-baseline='central'%3E%F0%9F%92%96%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

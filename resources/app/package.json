@@ -1,0 +1,47 @@
+{
+  "name": "ai-companion",
+  "version": "1.0.0",
+  "description": "AI 女友/男友 · 电脑桌面壳 + 安卓网页版（共用服务器后端）",
+  "main": "main.js",
+  "scripts": {
+    "server": "node server.js",
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.21.2"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.you.ai-companion",
+    "productName": "AI 伴侣",
+    "asar": false,
+    "files": [
+      "**/*",
+      "!dist/**",
+      "!_sttbuild/**",
+      "!_sttbuild2/**",
+      "!_verify/**",
+      "!clean/**",
+      "!node_modules/.cache/**",
+      "!node_modules/puppeteer/**",
+      "!node_modules/puppeteer-core/**",
+      "!node_modules/@puppeteer/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "portable",
+      "icon": "app.ico"
+    },
+    "portable": {
+      "artifactName": "AI伴侣.exe"
+    }
+  }
+}

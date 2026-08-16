@@ -1,0 +1,65 @@
+# ============================================================
+# AI 伴侣 (AI Companion) - Git 忽略规则
+# 本仓库只含【源码】。所有大模型权重 / 嵌入式 Python 运行时 /
+# 打包产物 / 用户隐私数据 均不进 git（体积巨大或含隐私）。
+# 完整可运行包怎么拿，见 README 的「获取完整包」一节。
+# ============================================================
+
+# ---------- Electron 打包产物 / 运行时文件（根目录） ----------
+AICompanion.exe
+AI伴侣.exe
+*.pak
+*.dll
+locales/
+resources.pak
+snapshot_blob.bin
+v8_context_snapshot.bin
+vk_swiftshader.dll
+vk_swiftshader_icd.json
+vulkan-1.dll
+d3dcompiler_47.dll
+libEGL.dll
+libGLESv2.dll
+icudtl.dat
+version
+debug.log
+LICENSES.chromium.html
+resources/default_app.asar
+
+# ---------- 大模型权重 / 嵌入式运行时（体积巨大，不进 git） ----------
+resources/app/chattts_runtime/
+resources/app/chattts/models/
+resources/app/models/
+resources/app/kokoro/
+resources/app/sherpa/
+resources/app/wheels/
+resources/app/chattts_DISABLED/
+resources/app/chattts_venv_disabled/
+resources/app/clean/
+
+# ---------- 用户隐私数据（聊天记录 / 配置 / 头像，绝不进 git） ----------
+resources/app/data/
+data/
+
+# ---------- 依赖 ----------
+resources/app/node_modules/
+node_modules/
+
+# ---------- 打包输出 ----------
+resources/app/dist/
+dist/
+
+# ---------- 开发 / 测试残留 ----------
+_verify_*.png
+*.bak
+__pycache__/
+*.pyc
+*.log
+
+# ---------- 顶层 .bat 脚本（依赖已删引擎或 exe，不进 git） ----------
+*.bat
+
+# ---------- 系统文件 ----------
+Thumbs.db
+Desktop.ini
+.DS_Store
